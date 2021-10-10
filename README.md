@@ -8,6 +8,7 @@ You can find all `C++` code here at the [`cpp`](/cpp) directory.
 
 One can mimic R's interactivity with `C++` using the `evalCpp()` function.
 
+
 ```r
 Rcpp::evalCpp("40 + 2")
 ```
@@ -94,12 +95,27 @@ Rcpp::evalCpp("(double) 13 / 4"); storage.mode(Rcpp::evalCpp("(double) 13 / 4"))
 
 ## Benchmarking
 
-We will be using `microbenchmark` package throughout along with the `ggplot2::autoplot()` function to visualise performance gains. Here I build a little function that sums all values in an array, let's compare it to the `R`'s built in `sum()` function.
+We will be using `microbenchmark` package throughout along with the `ggplot2::autoplot()` function to visualise performance gains. Here I build a little function in `R` and in `C++` which sums all values in an array, let's compare it to the `R`'s built in `sum()` function.
+
+
+
+```cpp
+#include <Rcpp.h>
+using namespace Rcpp;
+
+// [[Rcpp::export]]
+double sum_cpp(NumericVector x) {
+	double accum = 0;
+	for(int i = 0; x.size() > i; i++) {
+		accum = accum + x[i];
+	}
+	
+	return accum;
+}
+```
 
 
 ```r
-x <- runif(100000L) * 100
-
 sum_loop <- function(x) {
 	accum <- 0
 	for (i in 1:length(x)) {
@@ -107,8 +123,13 @@ sum_loop <- function(x) {
 	}
 	return(accum)
 }
+```
 
-all.equal(sum_loop(x), sum(x))
+
+```r
+x <- runif(100000L) * 100
+
+all.equal(sum_loop(x), sum(x), sum_cpp(x))
 ```
 
 ```
@@ -117,17 +138,20 @@ all.equal(sum_loop(x), sum(x))
 
 ```r
 res <- microbenchmark::microbenchmark(
+	sum_cpp(x),
 	sum_loop(x),
 	sum(x),
-	times = 3
+	times = 10
 )
 ```
 
+
 ```r
-ggplot2::autoplot(res)
+ggplot2::autoplot(res) +
+	ggplot2::labs(title = "Summing a vector implementations")
 ```
 
-<img src="/figures/cs-Rcpp_files/figure-html/benchmarking-plot-1.png" style="display: block; margin: auto;" />
+<img src="/Users/work/Autodidacte/data-science/data-camp/cs-Rcpp/figures/cs-Rcpp_files/figure-html/benchmarking-sum-plot-1.png" style="display: block; margin: auto;" />
 
 ```r
 remove(res)
@@ -248,9 +272,9 @@ identical(the_answer(), 42L)
 
 ```r
 cppFunction("
-double euclidean_distance(double x, double y) {
-	return sqrt(x * x + y * y);
-}
+	double euclidean_distance(double x, double y) {
+		return sqrt(x * x + y * y);
+	}
 ")
 
 euclidean_distance(1.5, 2.5)
@@ -277,13 +301,13 @@ It takes a string in double quotes and a place holder with a variable to replace
 
 ```r
 cppFunction('
-int fun() {
-	int x = 42;
-	
-	Rprintf("message, x = %d\\n", x);
-	
-	return 76;
-}
+	int fun() {
+		int x = 42;
+		
+		Rprintf("message, x = %d\\n", x);
+		
+		return 76;
+	}
 ')
 
 fun()
@@ -305,11 +329,11 @@ Note that `%d` and `%s` are used, first for an `integer` and the second for a `s
 ```r
 # Define the function add()
 cppFunction('
-int add(int x, int y) {
-	int res = x + y;
-	Rprintf("** %d + %d = %d\\n", x, y, res);
-	return res;
-}
+	int add(int x, int y) {
+		int res = x + y;
+		Rprintf("** %d + %d = %d\\n", x, y, res);
+		return res;
+	}
 ')
 
 # Call add() to print THE answer
@@ -329,16 +353,16 @@ Here we define a function that will only work if both arguments are positive, an
 
 ```r
 cppFunction('
-// adds x and y, but only if they are positive
-int add_positive_numbers(int x, int y) {
-	// if x is negative, stop
-	if(x < 0) stop("x is negative");
-	
-	// if y is negative, stop
-	if(y < 0) stop("y is negative");
-	
-	return x + y;
-}
+	// adds x and y, but only if they are positive
+	int add_positive_numbers(int x, int y) {
+		// if x is negative, stop
+		if(x < 0) stop("x is negative");
+		
+		// if y is negative, stop
+		if(y < 0) stop("y is negative");
+		
+		return x + y;
+	}
 ')
 
 # Call the function with positive numbers
@@ -932,10 +956,11 @@ res <- microbenchmark::microbenchmark(
 	times = 3
 )
 
-ggplot2::autoplot(res)
+ggplot2::autoplot(res) + 
+	ggplot2::labs(title = "Base weighted.mean vs C++ implementation")
 ```
 
-<img src="/figures/cs-Rcpp_files/figure-html/benchmark-weighted-mean-plot-1.png" style="display: block; margin: auto;" />
+<img src="/Users/work/Autodidacte/data-science/data-camp/cs-Rcpp/figures/cs-Rcpp_files/figure-html/benchmark-weighted-mean-plot-1.png" style="display: block; margin: auto;" />
 
 ```r
 remove(res)
@@ -1057,14 +1082,15 @@ res <- microbenchmark::microbenchmark(
 	good_cpp = good_select_positive_values_cpp(x)
 )
 
-ggplot2::autoplot(res)
+ggplot2::autoplot(res) +
+	ggplot2::labs(title = "Effect of vector initialisation/growth on performance")
 ```
 
 ```
 ## Coordinate system already present. Adding new coordinate system, which will replace the existing one.
 ```
 
-<img src="/figures/cs-Rcpp_files/figure-html/benchmark-good-vs-bad-vectors-cpp-plot-1.png" style="display: block; margin: auto;" />
+<img src="/Users/work/Autodidacte/data-science/data-camp/cs-Rcpp/figures/cs-Rcpp_files/figure-html/benchmark-good-vs-bad-vectors-cpp-plot-1.png" style="display: block; margin: auto;" />
 
 ```r
 remove(res)
@@ -1122,10 +1148,11 @@ res <- microbenchmark::microbenchmark(
 	times = 3
 )
 
-ggplot2::autoplot(res)
+ggplot2::autoplot(res) +
+	ggplot2::labs(title = "Custom vector initialisation algorithm vs std::vector")
 ```
 
-<img src="/figures/cs-Rcpp_files/figure-html/benchmark-std-easier-vectors-plot-1.png" style="display: block; margin: auto;" />
+<img src="/Users/work/Autodidacte/data-science/data-camp/cs-Rcpp/figures/cs-Rcpp_files/figure-html/benchmark-std-easier-vectors-plot-1.png" style="display: block; margin: auto;" />
 
 ```r
 remove(res)
@@ -1373,10 +1400,11 @@ res <- microbenchmark::microbenchmark(
 	times = 5
 )
 
-ggplot2::autoplot(res)
+ggplot2::autoplot(res) +
+	ggplot2::labs(title = "Rolling means algorithms")
 ```
 
-<img src="/figures/cs-Rcpp_files/figure-html/benchmark-rollmeans-plots-1.png" style="display: block; margin: auto;" />
+<img src="/Users/work/Autodidacte/data-science/data-camp/cs-Rcpp/figures/cs-Rcpp_files/figure-html/benchmark-rollmeans-plots-1.png" style="display: block; margin: auto;" />
 
 ```r
 remove(res)
@@ -1437,10 +1465,11 @@ res <- microbenchmark::microbenchmark(
 	times = 5
 )
 
-ggplot2::autoplot(res)
+ggplot2::autoplot(res) +
+	ggplot2::labs(title = "Rolling means algorithm vs C++ implementation")
 ```
 
-<img src="/figures/cs-Rcpp_files/figure-html/benchmark-cpp-rolling-mean-plot-1.png" style="display: block; margin: auto;" />
+<img src="/Users/work/Autodidacte/data-science/data-camp/cs-Rcpp/figures/cs-Rcpp_files/figure-html/benchmark-cpp-rolling-mean-plot-1.png" style="display: block; margin: auto;" />
 
 ```r
 remove(res)
@@ -1513,10 +1542,11 @@ res <- microbenchmark::microbenchmark(
 	times = 5
 )
 
-ggplot2::autoplot(res)
+ggplot2::autoplot(res) +
+	ggplot2::labs(title = "Last obs forward algorithm in R vs C++")
 ```
 
-<img src="/figures/cs-Rcpp_files/figure-html/benchmark-last-obs-forward-cpp-plot-1.png" style="display: block; margin: auto;" />
+<img src="/Users/work/Autodidacte/data-science/data-camp/cs-Rcpp/figures/cs-Rcpp_files/figure-html/benchmark-last-obs-forward-cpp-plot-1.png" style="display: block; margin: auto;" />
 
 ```r
 remove(res)
@@ -1596,10 +1626,11 @@ res <- microbenchmark::microbenchmark(
 	times = 5
 )
 
-ggplot2::autoplot(res)
+ggplot2::autoplot(res) +
+	ggplot2::labs(title = "NA substituting (mean) algorithms")
 ```
 
-<img src="/figures/cs-Rcpp_files/figure-html/benchmark-na-meancf-cpp-plot-1.png" style="display: block; margin: auto;" />
+<img src="/Users/work/Autodidacte/data-science/data-camp/cs-Rcpp/figures/cs-Rcpp_files/figure-html/benchmark-na-meancf-cpp-plot-1.png" style="display: block; margin: auto;" />
 
 ```r
 remove(res)
@@ -1660,12 +1691,12 @@ d <- data.frame(
 	y = ar_cpp(50, 10, c(1, -0.5), 1)
 )
 
-ggplot(d, aes(x, y)) +
-	geom_line() +
-	labs(title = "Auto regressive model")
+ggplot2::ggplot(d, aes(x, y)) +
+	ggplot2::geom_line() +
+	ggplot2::labs(title = "Auto regressive model")
 ```
 
-<img src="/figures/cs-Rcpp_files/figure-html/auto-regressive-cpp-1.png" style="display: block; margin: auto;" />
+<img src="/Users/work/Autodidacte/data-science/data-camp/cs-Rcpp/figures/cs-Rcpp_files/figure-html/auto-regressive-cpp-1.png" style="display: block; margin: auto;" />
 
 ```r
 remove(d)
@@ -1730,12 +1761,12 @@ d <- data.frame(
 	y = ma_cpp(50, 10, c(1, -0.5), 1)
 )
 
-ggplot(d, aes(x, y)) +
-	geom_line() +
-	labs(title = "Moving average")
+ggplot2::ggplot(d, aes(x, y)) +
+	ggplot2::geom_line() +
+	ggplot2::labs(title = "Moving average")
 ```
 
-<img src="/figures/cs-Rcpp_files/figure-html/moving-average-cpp-1.png" style="display: block; margin: auto;" />
+<img src="/Users/work/Autodidacte/data-science/data-camp/cs-Rcpp/figures/cs-Rcpp_files/figure-html/moving-average-cpp-1.png" style="display: block; margin: auto;" />
 
 ```r
 remove(d)
@@ -1792,12 +1823,12 @@ d <- data.frame(
 	y = arma(50, 10, c(1, -0.5), c(1, -0.5), 1)
 )
 
-ggplot(d, aes(x, y)) +
-	geom_line() +
-	labs(title = "ARMA model")
+ggplot2::ggplot(d, aes(x, y)) +
+	ggplot2::geom_line() +
+	ggplot2::labs(title = "ARMA model")
 ```
 
-<img src="/figures/cs-Rcpp_files/figure-html/arma-model-1.png" style="display: block; margin: auto;" />
+<img src="/Users/work/Autodidacte/data-science/data-camp/cs-Rcpp/figures/cs-Rcpp_files/figure-html/arma-model-1.png" style="display: block; margin: auto;" />
 
 ```r
 remove(d)
