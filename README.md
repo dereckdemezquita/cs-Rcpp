@@ -151,7 +151,7 @@ ggplot2::autoplot(res) +
 	ggplot2::labs(title = "Summing a vector implementations")
 ```
 
-<img src="/Users/work/Autodidacte/data-science/data-camp/cs-Rcpp/figures/cs-Rcpp_files/figure-html/benchmarking-sum-plot-1.png" style="display: block; margin: auto;" />
+<img src="/figures/cs-Rcpp_files/figure-html/benchmarking-sum-plot-1.png" style="display: block; margin: auto;" />
 
 ```r
 remove(res)
@@ -960,7 +960,7 @@ ggplot2::autoplot(res) +
 	ggplot2::labs(title = "Base weighted.mean vs C++ implementation")
 ```
 
-<img src="/Users/work/Autodidacte/data-science/data-camp/cs-Rcpp/figures/cs-Rcpp_files/figure-html/benchmark-weighted-mean-plot-1.png" style="display: block; margin: auto;" />
+<img src="/figures/cs-Rcpp_files/figure-html/benchmark-weighted-mean-plot-1.png" style="display: block; margin: auto;" />
 
 ```r
 remove(res)
@@ -1090,7 +1090,7 @@ ggplot2::autoplot(res) +
 ## Coordinate system already present. Adding new coordinate system, which will replace the existing one.
 ```
 
-<img src="/Users/work/Autodidacte/data-science/data-camp/cs-Rcpp/figures/cs-Rcpp_files/figure-html/benchmark-good-vs-bad-vectors-cpp-plot-1.png" style="display: block; margin: auto;" />
+<img src="/figures/cs-Rcpp_files/figure-html/benchmark-good-vs-bad-vectors-cpp-plot-1.png" style="display: block; margin: auto;" />
 
 ```r
 remove(res)
@@ -1152,7 +1152,7 @@ ggplot2::autoplot(res) +
 	ggplot2::labs(title = "Custom vector initialisation algorithm vs std::vector")
 ```
 
-<img src="/Users/work/Autodidacte/data-science/data-camp/cs-Rcpp/figures/cs-Rcpp_files/figure-html/benchmark-std-easier-vectors-plot-1.png" style="display: block; margin: auto;" />
+<img src="/figures/cs-Rcpp_files/figure-html/benchmark-std-easier-vectors-plot-1.png" style="display: block; margin: auto;" />
 
 ```r
 remove(res)
@@ -1404,7 +1404,7 @@ ggplot2::autoplot(res) +
 	ggplot2::labs(title = "Rolling means algorithms")
 ```
 
-<img src="/Users/work/Autodidacte/data-science/data-camp/cs-Rcpp/figures/cs-Rcpp_files/figure-html/benchmark-rollmeans-plots-1.png" style="display: block; margin: auto;" />
+<img src="/figures/cs-Rcpp_files/figure-html/benchmark-rollmeans-plots-1.png" style="display: block; margin: auto;" />
 
 ```r
 remove(res)
@@ -1469,7 +1469,7 @@ ggplot2::autoplot(res) +
 	ggplot2::labs(title = "Rolling means algorithm vs C++ implementation")
 ```
 
-<img src="/Users/work/Autodidacte/data-science/data-camp/cs-Rcpp/figures/cs-Rcpp_files/figure-html/benchmark-cpp-rolling-mean-plot-1.png" style="display: block; margin: auto;" />
+<img src="/figures/cs-Rcpp_files/figure-html/benchmark-cpp-rolling-mean-plot-1.png" style="display: block; margin: auto;" />
 
 ```r
 remove(res)
@@ -1546,7 +1546,7 @@ ggplot2::autoplot(res) +
 	ggplot2::labs(title = "Last obs forward algorithm in R vs C++")
 ```
 
-<img src="/Users/work/Autodidacte/data-science/data-camp/cs-Rcpp/figures/cs-Rcpp_files/figure-html/benchmark-last-obs-forward-cpp-plot-1.png" style="display: block; margin: auto;" />
+<img src="/figures/cs-Rcpp_files/figure-html/benchmark-last-obs-forward-cpp-plot-1.png" style="display: block; margin: auto;" />
 
 ```r
 remove(res)
@@ -1630,7 +1630,7 @@ ggplot2::autoplot(res) +
 	ggplot2::labs(title = "NA substituting (mean) algorithms")
 ```
 
-<img src="/Users/work/Autodidacte/data-science/data-camp/cs-Rcpp/figures/cs-Rcpp_files/figure-html/benchmark-na-meancf-cpp-plot-1.png" style="display: block; margin: auto;" />
+<img src="/figures/cs-Rcpp_files/figure-html/benchmark-na-meancf-cpp-plot-1.png" style="display: block; margin: auto;" />
 
 ```r
 remove(res)
@@ -1696,7 +1696,7 @@ ggplot2::ggplot(d, aes(x, y)) +
 	ggplot2::labs(title = "Auto regressive model")
 ```
 
-<img src="/Users/work/Autodidacte/data-science/data-camp/cs-Rcpp/figures/cs-Rcpp_files/figure-html/auto-regressive-cpp-1.png" style="display: block; margin: auto;" />
+<img src="/figures/cs-Rcpp_files/figure-html/auto-regressive-cpp-1.png" style="display: block; margin: auto;" />
 
 ```r
 remove(d)
@@ -1766,7 +1766,7 @@ ggplot2::ggplot(d, aes(x, y)) +
 	ggplot2::labs(title = "Moving average")
 ```
 
-<img src="/Users/work/Autodidacte/data-science/data-camp/cs-Rcpp/figures/cs-Rcpp_files/figure-html/moving-average-cpp-1.png" style="display: block; margin: auto;" />
+<img src="/figures/cs-Rcpp_files/figure-html/moving-average-cpp-1.png" style="display: block; margin: auto;" />
 
 ```r
 remove(d)
@@ -1828,7 +1828,7 @@ ggplot2::ggplot(d, aes(x, y)) +
 	ggplot2::labs(title = "ARMA model")
 ```
 
-<img src="/Users/work/Autodidacte/data-science/data-camp/cs-Rcpp/figures/cs-Rcpp_files/figure-html/arma-model-1.png" style="display: block; margin: auto;" />
+<img src="/figures/cs-Rcpp_files/figure-html/arma-model-1.png" style="display: block; margin: auto;" />
 
 ```r
 remove(d)
