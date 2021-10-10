@@ -33,7 +33,9 @@ library("ggplot2")
 
 # Introduction to `Rcpp`
 
-Course notes from datacamp course: [optimising R code with Rcpp](https://learn.datacamp.com/courses/optimizing-r-code-with-rcpp). 
+`C++` with `R`, notes and a crash course on Rcpp, notes taken from datacamp's ["Optimise R with Rcpp"](https://learn.datacamp.com/courses/optimizing-r-code-with-rcpp).
+
+You can find all `C++` code here at the [`cpp`](/cpp) directory.
 
 ## Interactive eval `C++`
 
@@ -1264,9 +1266,9 @@ d <- data.frame(
 	y = ar_cpp(50, 10, c(1, -0.5), 1)
 )
 
-ggplo2::ggplot(d, aes(x, y)) +
-	ggplo2::geom_line() +
-	ggplo2::labs(title = "Auto regressive model")
+ggplot2::ggplot(d, aes(x, y)) +
+	ggplot2::geom_line() +
+	ggplot2::labs(title = "Auto regressive model")
 
 remove(d)
 ```
@@ -1327,9 +1329,9 @@ d <- data.frame(
 	y = ma_cpp(50, 10, c(1, -0.5), 1)
 )
 
-ggplo2::ggplot(d, aes(x, y)) +
-	ggplo2::geom_line() +
-	ggplo2::labs(title = "Moving average")
+ggplot2::ggplot(d, aes(x, y)) +
+	ggplot2::geom_line() +
+	ggplot2::labs(title = "Moving average")
 
 remove(d)
 ```
@@ -1383,9 +1385,9 @@ d <- data.frame(
 	y = arma(50, 10, c(1, -0.5), c(1, -0.5), 1)
 )
 
-ggplo2::ggplot(d, aes(x, y)) +
-	ggplo2::geom_line() +
-	ggplo2::labs(title = "ARMA model")
+ggplot2::ggplot(d, aes(x, y)) +
+	ggplot2::geom_line() +
+	ggplot2::labs(title = "ARMA model")
 
 remove(d)
 ```
