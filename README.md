@@ -1,6 +1,6 @@
 # Introduction to `Rcpp` <img src="./figures/project-logo.png" width="100" align="right">
 
-Notes and a crash course on Rcpp, taken from datacamp's ["Optimise R with Rcpp"](https://learn.datacamp.com/courses/optimizing-r-code-with-rcpp).
+`C++` with `R`, notes and a crash course on Rcpp, taken from datacamp's ["Optimise R with Rcpp"](https://learn.datacamp.com/courses/optimizing-r-code-with-rcpp).
 
 You can find all `C++` code here at the [`cpp`](/cpp) directory.
 
