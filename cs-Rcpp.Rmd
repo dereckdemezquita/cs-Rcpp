@@ -67,11 +67,25 @@ Rcpp::evalCpp("(double) 13 / 4"); storage.mode(Rcpp::evalCpp("(double) 13 / 4"))
 
 ## Benchmarking
 
-We will be using `microbenchmark` package throughout along with the `ggplot2::autoplot()` function to visualise performance gains. Here I build a little function that sums all values in an array, let's compare it to the `R`'s built in `sum()` function.
+We will be using `microbenchmark` package throughout along with the `ggplot2::autoplot()` function to visualise performance gains. Here I build a little function in `R` and in `C++` which sums all values in an array, let's compare it to the `R`'s built in `sum()` function.
 
-```{r benchmarking}
-x <- runif(100000L) * 100
 
+```{Rcpp sum-cpp, cache=TRUE}
+#include <Rcpp.h>
+using namespace Rcpp;
+
+// [[Rcpp::export]]
+double sum_cpp(NumericVector x) {
+	double accum = 0;
+	for(int i = 0; x.size() > i; i++) {
+		accum = accum + x[i];
+	}
+	
+	return accum;
+}
+```
+
+```{r sum-R}
 sum_loop <- function(x) {
 	accum <- 0
 	for (i in 1:length(x)) {
@@ -79,19 +93,24 @@ sum_loop <- function(x) {
 	}
 	return(accum)
 }
+```
 
-all.equal(sum_loop(x), sum(x))
+```{r benchmarking-sums}
+x <- runif(100000L) * 100
+
+all.equal(sum_loop(x), sum(x), sum_cpp(x))
 
 res <- microbenchmark::microbenchmark(
+	sum_cpp(x),
 	sum_loop(x),
 	sum(x),
-	times = 3
+	times = 10
 )
 ```
 
-
-```{r benchmarking-plot, message=FALSE}
-ggplot2::autoplot(res)
+```{r benchmarking-sum-plot, message=FALSE}
+ggplot2::autoplot(res) +
+	ggplot2::labs(title = "Summing a vector implementations")
 
 remove(res)
 ```
@@ -156,9 +175,9 @@ identical(the_answer(), 42L)
 
 ```{r cpp-function-example}
 cppFunction("
-double euclidean_distance(double x, double y) {
-	return sqrt(x * x + y * y);
-}
+	double euclidean_distance(double x, double y) {
+		return sqrt(x * x + y * y);
+	}
 ")
 
 euclidean_distance(1.5, 2.5)
@@ -173,13 +192,13 @@ It takes a string in double quotes and a place holder with a variable to replace
 
 ```{r print-from-cpp}
 cppFunction('
-int fun() {
-	int x = 42;
-	
-	Rprintf("message, x = %d\\n", x);
-	
-	return 76;
-}
+	int fun() {
+		int x = 42;
+		
+		Rprintf("message, x = %d\\n", x);
+		
+		return 76;
+	}
 ')
 
 fun()
@@ -192,11 +211,11 @@ Note that `%d` and `%s` are used, first for an `integer` and the second for a `s
 ```{r print-strings-interp-cpp}
 # Define the function add()
 cppFunction('
-int add(int x, int y) {
-	int res = x + y;
-	Rprintf("** %d + %d = %d\\n", x, y, res);
-	return res;
-}
+	int add(int x, int y) {
+		int res = x + y;
+		Rprintf("** %d + %d = %d\\n", x, y, res);
+		return res;
+	}
 ')
 
 # Call add() to print THE answer
@@ -207,16 +226,16 @@ Here we define a function that will only work if both arguments are positive, an
 
 ```{r stoping-cpp-function}
 cppFunction('
-// adds x and y, but only if they are positive
-int add_positive_numbers(int x, int y) {
-	// if x is negative, stop
-	if(x < 0) stop("x is negative");
-	
-	// if y is negative, stop
-	if(y < 0) stop("y is negative");
-	
-	return x + y;
-}
+	// adds x and y, but only if they are positive
+	int add_positive_numbers(int x, int y) {
+		// if x is negative, stop
+		if(x < 0) stop("x is negative");
+		
+		// if y is negative, stop
+		if(y < 0) stop("y is negative");
+		
+		return x + y;
+	}
 ')
 
 # Call the function with positive numbers
@@ -637,7 +656,8 @@ res <- microbenchmark::microbenchmark(
 	times = 3
 )
 
-ggplot2::autoplot(res)
+ggplot2::autoplot(res) + 
+	ggplot2::labs(title = "Base weighted.mean vs C++ implementation")
 
 remove(res)
 ```
@@ -742,7 +762,8 @@ res <- microbenchmark::microbenchmark(
 	good_cpp = good_select_positive_values_cpp(x)
 )
 
-ggplot2::autoplot(res)
+ggplot2::autoplot(res) +
+	ggplot2::labs(title = "Effect of vector initialisation/growth on performance")
 
 remove(res)
 ```
@@ -789,7 +810,8 @@ res <- microbenchmark::microbenchmark(
 	times = 3
 )
 
-ggplot2::autoplot(res)
+ggplot2::autoplot(res) +
+	ggplot2::labs(title = "Custom vector initialisation algorithm vs std::vector")
 
 remove(res)
 ```
@@ -987,7 +1009,8 @@ res <- microbenchmark::microbenchmark(
 	times = 5
 )
 
-ggplot2::autoplot(res)
+ggplot2::autoplot(res) +
+	ggplot2::labs(title = "Rolling means algorithms")
 
 remove(res)
 ```
@@ -1044,7 +1067,8 @@ res <- microbenchmark::microbenchmark(
 	times = 5
 )
 
-ggplot2::autoplot(res)
+ggplot2::autoplot(res) +
+	ggplot2::labs(title = "Rolling means algorithm vs C++ implementation")
 
 remove(res)
 ```
@@ -1112,7 +1136,8 @@ res <- microbenchmark::microbenchmark(
 	times = 5
 )
 
-ggplot2::autoplot(res)
+ggplot2::autoplot(res) +
+	ggplot2::labs(title = "Last obs forward algorithm in R vs C++")
 
 remove(res)
 ```
@@ -1181,7 +1206,8 @@ res <- microbenchmark::microbenchmark(
 	times = 5
 )
 
-ggplot2::autoplot(res)
+ggplot2::autoplot(res) +
+	ggplot2::labs(title = "NA substituting (mean) algorithms")
 
 remove(res)
 ```
@@ -1238,9 +1264,9 @@ d <- data.frame(
 	y = ar_cpp(50, 10, c(1, -0.5), 1)
 )
 
-ggplot(d, aes(x, y)) +
-	geom_line() +
-	labs(title = "Auto regressive model")
+ggplo2::ggplot(d, aes(x, y)) +
+	ggplo2::geom_line() +
+	ggplo2::labs(title = "Auto regressive model")
 
 remove(d)
 ```
@@ -1301,9 +1327,9 @@ d <- data.frame(
 	y = ma_cpp(50, 10, c(1, -0.5), 1)
 )
 
-ggplot(d, aes(x, y)) +
-	geom_line() +
-	labs(title = "Moving average")
+ggplo2::ggplot(d, aes(x, y)) +
+	ggplo2::geom_line() +
+	ggplo2::labs(title = "Moving average")
 
 remove(d)
 ```
@@ -1357,9 +1383,9 @@ d <- data.frame(
 	y = arma(50, 10, c(1, -0.5), c(1, -0.5), 1)
 )
 
-ggplot(d, aes(x, y)) +
-	geom_line() +
-	labs(title = "ARMA model")
+ggplo2::ggplot(d, aes(x, y)) +
+	ggplo2::geom_line() +
+	ggplo2::labs(title = "ARMA model")
 
 remove(d)
 ```
