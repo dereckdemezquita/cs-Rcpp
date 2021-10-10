@@ -1,11 +1,12 @@
 # Introduction to `Rcpp` <img src="./figures/project-logo.png" width="100" align="right">
 
-Course notes from datacamp course: [optimising R code with Rcpp](https://learn.datacamp.com/courses/optimizing-r-code-with-rcpp). 
+Notes and a crash course on Rcpp, taken from datacamp's ["Optimise R with Rcpp"](https://learn.datacamp.com/courses/optimizing-r-code-with-rcpp).
+
+You can find all `C++` code here at the [`cpp`](/cpp) directory.
 
 ## Interactive eval `C++`
 
 One can mimic R's interactivity with `C++` using the `evalCpp()` function.
-
 
 ```r
 Rcpp::evalCpp("40 + 2")
