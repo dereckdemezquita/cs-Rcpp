@@ -1,4 +1,5 @@
-cs-Rcpp_cache
+cs-Rcpp_cache/
+*html
 
 # History files
 .Rhistory
