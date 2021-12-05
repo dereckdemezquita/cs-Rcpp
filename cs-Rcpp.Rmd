@@ -78,22 +78,22 @@ using namespace Rcpp;
 
 // [[Rcpp::export]]
 double sum_cpp(NumericVector x) {
-	double accum = 0;
-	for(int i = 0; x.size() > i; i++) {
-		accum = accum + x[i];
-	}
-	
-	return accum;
+    double accum = 0;
+    for(int i = 0; x.size() > i; i++) {
+        accum = accum + x[i];
+    }
+    
+    return accum;
 }
 ```
 
 ```{r sum-R}
 sum_loop <- function(x) {
-	accum <- 0
-	for (i in 1:length(x)) {
-		accum <- accum + x[i]
-	}
-	return(accum)
+    accum <- 0
+    for (i in 1:length(x)) {
+        accum <- accum + x[i]
+    }
+    return(accum)
 }
 ```
 
@@ -103,16 +103,16 @@ x <- runif(100000L) * 100
 all.equal(sum_loop(x), sum(x), sum_cpp(x))
 
 res <- microbenchmark::microbenchmark(
-	sum_cpp(x),
-	sum_loop(x),
-	sum(x),
-	times = 10
+    sum_cpp(x),
+    sum_loop(x),
+    sum(x),
+    times = 10
 )
 ```
 
 ```{r benchmarking-sum-plot, message=FALSE}
 ggplot2::autoplot(res) +
-	ggplot2::labs(title = "Summing a vector implementations")
+    ggplot2::labs(title = "Summing a vector implementations")
 
 remove(res)
 ```
@@ -151,10 +151,10 @@ In `C++` things are all statically types. You must declare the type of the argum
 
 ```{r structure-of-cpp-function}
 cppFunction("
-	int fun() {
-		int x = 37;
-		return x;
-	}
+    int fun() {
+        int x = 37;
+        return x;
+    }
 ")
 
 fun()
@@ -163,9 +163,9 @@ fun()
 
 ```{r type-declaration-cpp-function}
 cppFunction("
-	int the_answer() {
-		return 42;
-	}				
+    int the_answer() {
+        return 42;
+    }                
 ")
 
 storage.mode(the_answer())
@@ -177,9 +177,9 @@ identical(the_answer(), 42L)
 
 ```{r cpp-function-example}
 cppFunction("
-	double euclidean_distance(double x, double y) {
-		return sqrt(x * x + y * y);
-	}
+    double euclidean_distance(double x, double y) {
+        return sqrt(x * x + y * y);
+    }
 ")
 
 euclidean_distance(1.5, 2.5)
@@ -194,13 +194,13 @@ It takes a string in double quotes and a place holder with a variable to replace
 
 ```{r print-from-cpp}
 cppFunction('
-	int fun() {
-		int x = 42;
-		
-		Rprintf("message, x = %d\\n", x);
-		
-		return 76;
-	}
+    int fun() {
+        int x = 42;
+        
+        Rprintf("message, x = %d\\n", x);
+        
+        return 76;
+    }
 ')
 
 fun()
@@ -213,11 +213,11 @@ Note that `%d` and `%s` are used, first for an `integer` and the second for a `s
 ```{r print-strings-interp-cpp}
 # Define the function add()
 cppFunction('
-	int add(int x, int y) {
-		int res = x + y;
-		Rprintf("** %d + %d = %d\\n", x, y, res);
-		return res;
-	}
+    int add(int x, int y) {
+        int res = x + y;
+        Rprintf("** %d + %d = %d\\n", x, y, res);
+        return res;
+    }
 ')
 
 # Call add() to print THE answer
@@ -228,16 +228,16 @@ Here we define a function that will only work if both arguments are positive, an
 
 ```{r stoping-cpp-function}
 cppFunction('
-	// adds x and y, but only if they are positive
-	int add_positive_numbers(int x, int y) {
-		// if x is negative, stop
-		if(x < 0) stop("x is negative");
-		
-		// if y is negative, stop
-		if(y < 0) stop("y is negative");
-		
-		return x + y;
-	}
+    // adds x and y, but only if they are positive
+    int add_positive_numbers(int x, int y) {
+        // if x is negative, stop
+        if(x < 0) stop("x is negative");
+        
+        // if y is negative, stop
+        if(y < 0) stop("y is negative");
+        
+        return x + y;
+    }
 ')
 
 # Call the function with positive numbers
@@ -245,9 +245,9 @@ add_positive_numbers(2, 3)
 
 # Call the function with a negative number
 tryCatch({
-	add_positive_numbers(-2, 3)
+    add_positive_numbers(-2, 3)
 }, error = function(e) {
-	message("Error: ", e)
+    message("Error: ", e)
 })
 ```
 
@@ -291,12 +291,12 @@ using namespace Rcpp;
 
 // [[Rcpp::export]]
 double sqrt_approx(double value, int n) {
-	double x = 1;
-	for(int i = 0; n > i; i++) {
-		x = (x + value / x) / 2.0;
-	}
-	
-	return x;
+    double x = 1;
+    for(int i = 0; n > i; i++) {
+        x = (x + value / x) / 2.0;
+    }
+    
+    return x;
 }
 ```
 
@@ -312,20 +312,20 @@ using namespace Rcpp;
 
 // [[Rcpp::export]]
 List sqrt_approx(double value, int n, double threshold) {
-	double x = 1.0;
-	double previous = x;
-	bool is_good_enough = false;
-	int i;
-	for(i = 0; i < n; i++) {
-		previous = x;
-		x = (x + value / x) / 2.0;
-		is_good_enough = fabs(previous - x) < threshold;
-		
-		// If the solution is good enough, then "break"
-		Rprintf("** Index: %i, value: %f\n", i, x);
-		if(is_good_enough) break;
-	}
-	return List::create(_["i"] = i , _["x"] = x);
+    double x = 1.0;
+    double previous = x;
+    bool is_good_enough = false;
+    int i;
+    for(i = 0; i < n; i++) {
+        previous = x;
+        x = (x + value / x) / 2.0;
+        is_good_enough = fabs(previous - x) < threshold;
+        
+        // If the solution is good enough, then "break"
+        Rprintf("** Index: %i, value: %f\n", i, x);
+        if(is_good_enough) break;
+    }
+    return List::create(_["i"] = i , _["x"] = x);
 }
 ```
 
@@ -341,17 +341,17 @@ using namespace Rcpp;
 
 // [[Rcpp::export]]
 double sqrt_approx(double value, double threshold) {
-	double x = 1.0;
-	double previous = x;
-	bool is_good_enough = false;
-	
-	while(!is_good_enough) {
-		previous = x;
-		x = (x + value / x) / 2.0;
-		is_good_enough = fabs(x - previous) < threshold;
-	}
-	
-	return x;
+    double x = 1.0;
+    double previous = x;
+    bool is_good_enough = false;
+    
+    while(!is_good_enough) {
+        previous = x;
+        x = (x + value / x) / 2.0;
+        is_good_enough = fabs(x - previous) < threshold;
+    }
+    
+    return x;
 }
 ```
 
@@ -365,19 +365,19 @@ using namespace Rcpp;
 
 // [[Rcpp::export]]
 double sqrt_approx(double value, double threshold) {
-	double x = 1.0;
-	double previous = x;
-	bool is_good_enough = false;
-	
-	// Initiate do while loop
-	do {
-		  previous = x;
-		  x = (x + value / x) / 2.0;
-		  is_good_enough = fabs(x - previous) < threshold;
-	// Specify while condition
-	} while(!is_good_enough);
-	
-	return x;
+    double x = 1.0;
+    double previous = x;
+    bool is_good_enough = false;
+    
+    // Initiate do while loop
+    do {
+          previous = x;
+          x = (x + value / x) / 2.0;
+          is_good_enough = fabs(x - previous) < threshold;
+    // Specify while condition
+    } while(!is_good_enough);
+    
+    return x;
 }
 ```
 
@@ -410,13 +410,13 @@ using namespace Rcpp;
 
 // [[Rcpp::export]]
 double first_plus_last(NumericVector x) {
-	// The size of x
-	int n = x.size();
-	// The first element of x
-	double first = x[0];
-	// The last element of x
-	double last = x[n-1];
-	return first + last;
+    // The size of x
+    int n = x.size();
+    // The first element of x
+    double first = x[0];
+    // The last element of x
+    double last = x[n-1];
+    return first + last;
 }
 ```
 
@@ -436,14 +436,14 @@ using namespace Rcpp;
 
 // [[Rcpp::export]]
 double sum_cpp(NumericVector x) {
-	int n = x.size();
-	double result = 0;
-	
-	for(int i = 0; i < n; i++) {
-		result = x[i] + result;
-	}
-	
-	return result;
+    int n = x.size();
+    double result = 0;
+    
+    for(int i = 0; i < n; i++) {
+        result = x[i] + result;
+    }
+    
+    return result;
 }
 ```
 
@@ -469,13 +469,13 @@ using namespace Rcpp;
 // [[Rcpp::export]]
 
 NumericVector ones(int n) {
-	// Initialise numeric vector of size n
-	NumericVector x(n);
-	
-	for(int i = 0; i < n; i++) {
-		x[i] = 1;
-	}
-	return x;
+    // Initialise numeric vector of size n
+    NumericVector x(n);
+    
+    for(int i = 0; i < n; i++) {
+        x[i] = 1;
+    }
+    return x;
 }
 ```
 
@@ -491,7 +491,7 @@ using namespace Rcpp;
 
 // [[Rcpp::export]]
 NumericVector named_vector() {
-	return NumericVector::create(_["a"] = 1, _["b"] = 2, 5, _["d"] = 10);
+    return NumericVector::create(_["a"] = 1, _["b"] = 2, 5, _["d"] = 10);
 };
 ```
 
@@ -507,9 +507,9 @@ using namespace Rcpp;
 
 // [[Rcpp::export]]
 NumericVector positives(NumericVector x) {
-	NumericVector y = clone(x);
-	
-	return y;
+    NumericVector y = clone(x);
+    
+    return y;
 }
 ```
 
@@ -524,17 +524,17 @@ using namespace Rcpp;
 // Set the return type to IntegerVector
 // [[Rcpp::export]]
 IntegerVector seq_cpp(int lo, int hi) {
-	int n = hi - lo + 1;
-	 
-	// Create a new integer vector, sequence, of size n
-	IntegerVector sequence(n);
-	 
-	for(int i = 0; i < n; i++) {
-		// Set the ith element of sequence to lo plus i
-		sequence[i] = lo + i;
-	}
-	
-	return sequence;
+    int n = hi - lo + 1;
+     
+    // Create a new integer vector, sequence, of size n
+    IntegerVector sequence(n);
+     
+    for(int i = 0; i < n; i++) {
+        // Set the ith element of sequence to lo plus i
+        sequence[i] = lo + i;
+    }
+    
+    return sequence;
 }
 ```
 
@@ -556,13 +556,13 @@ using namespace Rcpp;
 
 // [[Rcpp::export]]
 List create_vectors() {
-	// Create an unnamed character vector
-	CharacterVector polygons = CharacterVector::create("triangle", "square", "pentagon");
-	// Create a named integer vector
-	IntegerVector mersenne_primes = IntegerVector::create(_["first"] = 3, _["second"] = 7, _["third"] = 31);
-	// Create a named list
-	List both = List::create(_["polygons"] = polygons, _["mersenne_primes"] = mersenne_primes);
-	return both;
+    // Create an unnamed character vector
+    CharacterVector polygons = CharacterVector::create("triangle", "square", "pentagon");
+    // Create a named integer vector
+    IntegerVector mersenne_primes = IntegerVector::create(_["first"] = 3, _["second"] = 7, _["third"] = 31);
+    // Create a named list
+    List both = List::create(_["polygons"] = polygons, _["mersenne_primes"] = mersenne_primes);
+    return both;
 }
 ```
 
@@ -584,24 +584,24 @@ using namespace Rcpp;
 
 // [[Rcpp::export]]
 List change_negatives_to_zero(NumericVector the_original) {
-	// Set the copy to the original
-	NumericVector the_copy = the_original;
-	int n = the_original.size();
-	for(int i = 0; i < n; i++) {
-		if(the_copy[i] < 0) the_copy[i] = 0;
-	}
-	return List::create(_["the_original"] = the_original, _["the_copy"] = the_copy);
+    // Set the copy to the original
+    NumericVector the_copy = the_original;
+    int n = the_original.size();
+    for(int i = 0; i < n; i++) {
+        if(the_copy[i] < 0) the_copy[i] = 0;
+    }
+    return List::create(_["the_original"] = the_original, _["the_copy"] = the_copy);
 }
 
 // [[Rcpp::export]]
 List change_negatives_to_zero_with_cloning(NumericVector the_original) {
 // Clone the original to make the copy
 NumericVector the_copy = clone(the_original);
-	int n = the_original.size();
-	for(int i = 0; i < n; i++) {
-		if(the_copy[i] < 0) the_copy[i] = 0;
-	}
-	return List::create(_["the_original"] = the_original, _["the_copy"] = the_copy);
+    int n = the_original.size();
+    for(int i = 0; i < n; i++) {
+        if(the_copy[i] < 0) the_copy[i] = 0;
+    }
+    return List::create(_["the_original"] = the_original, _["the_copy"] = the_copy);
 }
 ```
 
@@ -623,22 +623,22 @@ using namespace Rcpp;
 
 // [[Rcpp::export]]
 double weighted_mean_cpp(NumericVector x, NumericVector w) {
-	// Initialise these to zero
-	double total_w = 0;
-	double total_xw = 0;
-	
-	// Set n to the size of x
-	int n = x.size();
-	
-	for(int i = 0; i < n; i++) {
-		// Add the ith weight
-		total_w += w[i];
-		
-		// Add the ith data value times the ith weight
-		total_xw += x[i] * w[i];
-	}
-	
-	return total_xw / total_w;
+    // Initialise these to zero
+    double total_w = 0;
+    double total_xw = 0;
+    
+    // Set n to the size of x
+    int n = x.size();
+    
+    for(int i = 0; i < n; i++) {
+        // Add the ith weight
+        total_w += w[i];
+        
+        // Add the ith data value times the ith weight
+        total_xw += x[i] * w[i];
+    }
+    
+    return total_xw / total_w;
 }
 ```
 
@@ -653,13 +653,13 @@ identical(weighted_mean_cpp(x, w), weighted.mean(x, w))
 
 ```{r benchmark-weighted-mean-plot, message=FALSE}
 res <- microbenchmark::microbenchmark(
-	weighted_mean_cpp = weighted_mean_cpp(x, w),
-	weighted.mean_R = weighted.mean(x, w),
-	times = 3
+    weighted_mean_cpp = weighted_mean_cpp(x, w),
+    weighted.mean_R = weighted.mean(x, w),
+    times = 3
 )
 
 ggplot2::autoplot(res) + 
-	ggplot2::labs(title = "Base weighted.mean vs C++ implementation")
+    ggplot2::labs(title = "Base weighted.mean vs C++ implementation")
 
 remove(res)
 ```
@@ -672,22 +672,22 @@ using namespace Rcpp;
 
 // [[Rcpp::export]]
 double weighted_mean_cpp(NumericVector x, NumericVector w) {
-	double total_w = 0;
-	double total_xw = 0;
-	
-	int n = x.size();
-	
-	for(int i = 0; i < n; i++) {
-		// If the ith element of x or w is NA then return NA
-		if(NumericVector::is_na(x[i]) || NumericVector::is_na(w[i])) {
-			return NumericVector::get_na();
-		}
-		
-		total_w += w[i];
-		total_xw += x[i] * w[i];
-	}
-	
-	return total_xw / total_w;
+    double total_w = 0;
+    double total_xw = 0;
+    
+    int n = x.size();
+    
+    for(int i = 0; i < n; i++) {
+        // If the ith element of x or w is NA then return NA
+        if(NumericVector::is_na(x[i]) || NumericVector::is_na(w[i])) {
+            return NumericVector::get_na();
+        }
+        
+        total_w += w[i];
+        total_xw += x[i] * w[i];
+    }
+    
+    return total_xw / total_w;
 }
 ```
 
@@ -709,44 +709,44 @@ using namespace Rcpp;
 
 // [[Rcpp::export]]
 NumericVector bad_select_positive_values_cpp(NumericVector x) {
-	NumericVector positive_x(0);
-	for(int i = 0; i < x.size(); i++) {
-		if(x[i] > 0) {
-			positive_x.push_back(x[i]);
-		}
-	}
-	return positive_x;
+    NumericVector positive_x(0);
+    for(int i = 0; i < x.size(); i++) {
+        if(x[i] > 0) {
+            positive_x.push_back(x[i]);
+        }
+    }
+    return positive_x;
 }
 
 // [[Rcpp::export]]
 NumericVector good_select_positive_values_cpp(NumericVector x) {
-	int n_elements = x.size();
-	int n_positive_elements = 0;
-	
-	// Calculate the size of the output
-	for(int i = 0; i < n_elements; i++) {
-		// If the ith element of x is positive
-		if(x[i] > 0) {
-			// Add 1 to n_positive_elements
-			n_positive_elements++;
-		}
-	}
-	
-	// Allocate a vector of size n_positive_elements
-	NumericVector positive_x(n_positive_elements);
-	
-	// Fill the vector
-	int j = 0;
-	for(int i = 0; i < n_elements; i++) {
-		// If the ith element of x is positive
-		if(x[i] > 0) {
-			// Set the jth element of positive_x to the ith element of x
-			positive_x[j] = x[i];
-			// Add 1 to j
-			j++;
-		}
-	}
-	return positive_x;
+    int n_elements = x.size();
+    int n_positive_elements = 0;
+    
+    // Calculate the size of the output
+    for(int i = 0; i < n_elements; i++) {
+        // If the ith element of x is positive
+        if(x[i] > 0) {
+            // Add 1 to n_positive_elements
+            n_positive_elements++;
+        }
+    }
+    
+    // Allocate a vector of size n_positive_elements
+    NumericVector positive_x(n_positive_elements);
+    
+    // Fill the vector
+    int j = 0;
+    for(int i = 0; i < n_elements; i++) {
+        // If the ith element of x is positive
+        if(x[i] > 0) {
+            // Set the jth element of positive_x to the ith element of x
+            positive_x[j] = x[i];
+            // Add 1 to j
+            j++;
+        }
+    }
+    return positive_x;
 }
 ```
 
@@ -760,12 +760,12 @@ all.equal(good_select_positive_values_cpp(x), x[x > 0])
 
 ```{r benchmark-good-vs-bad-vectors-cpp-plot}
 res <- microbenchmark::microbenchmark(
-	bad_cpp = bad_select_positive_values_cpp(x),
-	good_cpp = good_select_positive_values_cpp(x)
+    bad_cpp = bad_select_positive_values_cpp(x),
+    good_cpp = good_select_positive_values_cpp(x)
 )
 
 ggplot2::autoplot(res) +
-	ggplot2::labs(title = "Effect of vector initialisation/growth on performance")
+    ggplot2::labs(title = "Effect of vector initialisation/growth on performance")
 
 remove(res)
 ```
@@ -782,18 +782,18 @@ using namespace Rcpp;
 // Set the return type to a standard double vector
 // [[Rcpp::export]]
 std::vector<double> select_positive_values_std(NumericVector x) {
-	int n = x.size();
-	
-	// Create positive_x, a standard double vector
-	std::vector<double> positive_x(0);
-	
-	for(int i = 0; i < n; i++) {
-		if(x[i] > 0) {
-		// Append the ith element of x to positive_x
-			positive_x.push_back(x[i]);
-		}
-	}
-	return positive_x;
+    int n = x.size();
+    
+    // Create positive_x, a standard double vector
+    std::vector<double> positive_x(0);
+    
+    for(int i = 0; i < n; i++) {
+        if(x[i] > 0) {
+        // Append the ith element of x to positive_x
+            positive_x.push_back(x[i]);
+        }
+    }
+    return positive_x;
 }
 ```
 
@@ -807,13 +807,13 @@ all.equal(select_positive_values_std(x), x[x > 0])
 
 ```{r benchmark-std-easier-vectors-plot, message=FALSE}
 res <- microbenchmark::microbenchmark(
-	good_cpp = good_select_positive_values_cpp(x),
-	std = select_positive_values_std(x),
-	times = 3
+    good_cpp = good_select_positive_values_cpp(x),
+    std = select_positive_values_std(x),
+    times = 3
 )
 
 ggplot2::autoplot(res) +
-	ggplot2::labs(title = "Custom vector initialisation algorithm vs std::vector")
+    ggplot2::labs(title = "Custom vector initialisation algorithm vs std::vector")
 
 remove(res)
 ```
@@ -830,21 +830,21 @@ using namespace Rcpp;
 
 // [[Rcpp::export]]
 NumericVector positive_rnorm(int n, double mean, double sd) {
-	// Specify out as a numeric vector of size n
-	NumericVector out(n);
-	
-	// This loops over the elements of out
-	for(int i = 0; i < n; i++) {
-		// This loop keeps trying to generate a value
-		do {
-			// Call R's rnorm()
-			out[i] = R::rnorm(mean, sd);
-			// While the number is negative, keep trying
-			
-			Rprintf("Searching for positive: %d\n", i);
-		} while(out[i] <= 0);
-	}
-	return out;
+    // Specify out as a numeric vector of size n
+    NumericVector out(n);
+    
+    // This loops over the elements of out
+    for(int i = 0; i < n; i++) {
+        // This loop keeps trying to generate a value
+        do {
+            // Call R's rnorm()
+            out[i] = R::rnorm(mean, sd);
+            // While the number is negative, keep trying
+            
+            Rprintf("Searching for positive: %d\n", i);
+        } while(out[i] <= 0);
+    }
+    return out;
 }
 ```
 
@@ -860,18 +860,18 @@ using namespace Rcpp;
 
 // [[Rcpp::export]]
 int choose_component(NumericVector weights, double total_weight) {
-	// Generate a uniform random number from 0 to total_weight
-	double x = R::runif(0, total_weight);
-	
-	// Remove the jth weight from x until x is small enough
-	int j = 0;
-	while(x >= weights[j]) {
-		// Subtract jth element of weights from x
-		x -= weights[j];
-		j++;
-	}
-	
-	return j;
+    // Generate a uniform random number from 0 to total_weight
+    double x = R::runif(0, total_weight);
+    
+    // Remove the jth weight from x until x is small enough
+    int j = 0;
+    while(x >= weights[j]) {
+        // Subtract jth element of weights from x
+        x -= weights[j];
+        j++;
+    }
+    
+    return j;
 }
 ```
 
@@ -893,44 +893,44 @@ using namespace Rcpp;
 // From previous exercise; do not modify
 // [[Rcpp::export]]
 int choose_component(NumericVector weights, double total_weight) {
-	double x = R::runif(0, total_weight);
-	int j = 0;
-	while(x >= weights[j]) {
-		x -= weights[j];
-		j++;
-	}
-	return j;
+    double x = R::runif(0, total_weight);
+    int j = 0;
+    while(x >= weights[j]) {
+        x -= weights[j];
+        j++;
+    }
+    return j;
 }
 
 // [[Rcpp::export]]
 NumericVector rmix(int n, NumericVector weights, NumericVector means, NumericVector sds) {
-	// Check that weights and means have the same size
-	int d = weights.size();
-	if(means.size() != d) {
-		stop("means size != weights size");
-	}
-	
-	// Do the same for the weights and std devs
-	if(sds.size() != d) {
-		stop("sds size != weights size");
-	}
-	
-	// Calculate the total weight
-	double total_weight = sum(weights);
-	
-	// Create the output vector
-	NumericVector res(n);
-	
-	// Fill the vector
-	for(int i = 0; i < n; i++) {
-		// Choose a component
-		int j = choose_component(weights, total_weight);
-		
-		// Simulate from the chosen component
-		res[i] = R::rnorm(means[j], sds[j]);
-	}
-	
-	return res;
+    // Check that weights and means have the same size
+    int d = weights.size();
+    if(means.size() != d) {
+        stop("means size != weights size");
+    }
+    
+    // Do the same for the weights and std devs
+    if(sds.size() != d) {
+        stop("sds size != weights size");
+    }
+    
+    // Calculate the total weight
+    double total_weight = sum(weights);
+    
+    // Create the output vector
+    NumericVector res(n);
+    
+    // Fill the vector
+    for(int i = 0; i < n; i++) {
+        // Choose a component
+        int j = choose_component(weights, total_weight);
+        
+        // Simulate from the chosen component
+        res[i] = R::rnorm(means[j], sds[j]);
+    }
+    
+    return res;
 }
 ```
 
@@ -947,50 +947,50 @@ rmix(10, weights, means, sds)
 
 ```{r rollmean1-func}
 rollmean1 <- function(x, window = 3) {
-	n <- length(x)
-	res <- rep(NA, n)
-	for (i in seq(window, n)) {
-		res[i] <- mean(x[seq(i - window + 1, i)])
-	}
-	return(res)
+    n <- length(x)
+    res <- rep(NA, n)
+    for (i in seq(window, n)) {
+        res[i] <- mean(x[seq(i - window + 1, i)])
+    }
+    return(res)
 }
 ```
 
 ```{r rollmean2-func}
 rollmean2 <- function(x, window = 3){
-	n <- length(x)
-	res <- rep(NA, n)
-	total <- sum(head(x, window))
-	res[window] <- total / window
-	for(i in seq(window + 1, n)) {
-		total <- total + x[i] - x[i - window]
-		res[i] <- total / window
-	}
-	return(res)
+    n <- length(x)
+    res <- rep(NA, n)
+    total <- sum(head(x, window))
+    res[window] <- total / window
+    for(i in seq(window + 1, n)) {
+        total <- total + x[i] - x[i - window]
+        res[i] <- total / window
+    }
+    return(res)
 }
 ```
 
 ```{r rollmean3-func}
 rollmean3 <- function(x, window = 3) {
-	# Add the first window elements of x
-	initial_total <- sum(head(x, window))
-	
-	# The elements to add at each iteration    
-	lasts <- tail(x, - window)
-	
-	# The elements to remove
-	firsts <- head(x, - window)
-	
-	# Take the initial total and add the 
-	# cumulative sum of lasts minus firsts
-	other_totals <- initial_total + cumsum(lasts - firsts)
-	
-	# Build the output vector 
-	c(
-		rep(NA, window - 1), # leading NA
-		initial_total / window, # initial mean
-		other_totals / window   # other means
-	)
+    # Add the first window elements of x
+    initial_total <- sum(head(x, window))
+    
+    # The elements to add at each iteration    
+    lasts <- tail(x, - window)
+    
+    # The elements to remove
+    firsts <- head(x, - window)
+    
+    # Take the initial total and add the 
+    # cumulative sum of lasts minus firsts
+    other_totals <- initial_total + cumsum(lasts - firsts)
+    
+    # Build the output vector 
+    c(
+        rep(NA, window - 1), # leading NA
+        initial_total / window, # initial mean
+        other_totals / window   # other means
+    )
 }
 ```
 
@@ -1005,14 +1005,14 @@ all.equal(rollmean1(x), rollmean3(x))
 
 ```{r benchmark-rollmeans-plots, message=FALSE}
 res <- microbenchmark::microbenchmark(
-	rollmean1(x), 
-	rollmean2(x), 
-	rollmean3(x),
-	times = 5
+    rollmean1(x), 
+    rollmean2(x), 
+    rollmean3(x),
+    times = 5
 )
 
 ggplot2::autoplot(res) +
-	ggplot2::labs(title = "Rolling means algorithms")
+    ggplot2::labs(title = "Rolling means algorithms")
 
 remove(res)
 ```
@@ -1027,29 +1027,29 @@ using namespace Rcpp;
 
 // [[Rcpp::export]]
 NumericVector rollmean_cpp(NumericVector x, int window) {
-	int n = x.size();
-	
-	// Set res as a NumericVector of NAs with length n
-	NumericVector res(n, NumericVector::get_na());
-	
-	// Sum the first window worth of values of x
-	double total = 0.0;
-	for(int i = 0; i < window; i++) {
-		total += x[i];
-	}
-	
-	// Treat the first case seperately
-	res[window - 1] = total / window;
-	
-	// Iteratively update the total and recalculate the mean 
-	for(int i = window; i < n; i++) {
-		// Remove the (i - window)th case, and add the ith case
-		total += - x[i - window] + x[i];
-		// Calculate the mean at the ith position
-		res[i] = total / window;
-	}
-	
-	return res;  
+    int n = x.size();
+    
+    // Set res as a NumericVector of NAs with length n
+    NumericVector res(n, NumericVector::get_na());
+    
+    // Sum the first window worth of values of x
+    double total = 0.0;
+    for(int i = 0; i < window; i++) {
+        total += x[i];
+    }
+    
+    // Treat the first case seperately
+    res[window - 1] = total / window;
+    
+    // Iteratively update the total and recalculate the mean 
+    for(int i = window; i < n; i++) {
+        // Remove the (i - window)th case, and add the ith case
+        total += - x[i - window] + x[i];
+        // Calculate the mean at the ith position
+        res[i] = total / window;
+    }
+    
+    return res;  
 }
 ```
 
@@ -1062,15 +1062,15 @@ x <- rnorm(1e4)
 
 ```{r benchmark-cpp-rolling-mean-plot, message=FALSE}
 res <- microbenchmark::microbenchmark(
-	rollmean1(x, 4),
-	rollmean2(x, 4), 
-	rollmean3(x, 4),
-	rollmean_cpp(x, 4),
-	times = 5
+    rollmean1(x, 4),
+    rollmean2(x, 4), 
+    rollmean3(x, 4),
+    rollmean_cpp(x, 4),
+    times = 5
 )
 
 ggplot2::autoplot(res) +
-	ggplot2::labs(title = "Rolling means algorithm vs C++ implementation")
+    ggplot2::labs(title = "Rolling means algorithm vs C++ implementation")
 
 remove(res)
 ```
@@ -1081,19 +1081,19 @@ If missing values carry the last one not missing. In timeseries it is common to 
 
 ```{r last-obs-forward-R}
 na_locf_R <- function(x) {
-	current <- NA  
-	res <- x
-	for(i in seq_along(x)) {
-		if(is.na(x[i])) {
-			# Replace with current
-			res[i] <- current
-		} else {
-			# Set current 
-			current <- x[i]
-		}
-	}
-	
-	return(res)
+    current <- NA  
+    res <- x
+    for(i in seq_along(x)) {
+        if(is.na(x[i])) {
+            # Replace with current
+            res[i] <- current
+        } else {
+            # Set current 
+            current <- x[i]
+        }
+    }
+    
+    return(res)
 }
 ```
 
@@ -1104,22 +1104,22 @@ using namespace Rcpp;
 
 // [[Rcpp::export]]
 NumericVector na_locf_cpp(NumericVector x) {
-	// Initialise to NA
-	double current = NumericVector::get_na();
-	
-	int n = x.size();
-	NumericVector res = clone(x);
-	for(int i = 0; i < n; i++) {
-		// If ith value of x is NA
-		if(NumericVector::is_na(x[i])) {
-			// Set ith result as current
-			res[i] = current;
-		} else {
-			// Set current as ith value of x
-			current = res[i];
-		}
-	}
-	return res;
+    // Initialise to NA
+    double current = NumericVector::get_na();
+    
+    int n = x.size();
+    NumericVector res = clone(x);
+    for(int i = 0; i < n; i++) {
+        // If ith value of x is NA
+        if(NumericVector::is_na(x[i])) {
+            // Set ith result as current
+            res[i] = current;
+        } else {
+            // Set current as ith value of x
+            current = res[i];
+        }
+    }
+    return res;
 }
 ```
 
@@ -1133,13 +1133,13 @@ x[sample(1e5, 100)] <- NA
 
 ```{r benchmark-last-obs-forward-cpp-plot, message=FALSE}
 res <- microbenchmark::microbenchmark(
-	na_locf_R(x),
-	na_locf_cpp(x),
-	times = 5
+    na_locf_R(x),
+    na_locf_cpp(x),
+    times = 5
 )
 
 ggplot2::autoplot(res) +
-	ggplot2::labs(title = "Last obs forward algorithm in R vs C++")
+    ggplot2::labs(title = "Last obs forward algorithm in R vs C++")
 
 remove(res)
 ```
@@ -1150,18 +1150,18 @@ An alternative to just carrying the last value forward is to calculate the mean 
 
 ```{r na-meancf-R}
 na_meancf_R <- function(x) {
-	total_not_na <- 0
-	n_not_na <- 0
-	res <- x
-	for (i in seq_along(x)) {
-		if (is.na(x[i])) {
-			res[i] <- total_not_na / n_not_na
-		} else {
-			total_not_na <- total_not_na + x[i]
-			n_not_na <- n_not_na + 1
-		}
-	}
-	return(res)
+    total_not_na <- 0
+    n_not_na <- 0
+    res <- x
+    for (i in seq_along(x)) {
+        if (is.na(x[i])) {
+            res[i] <- total_not_na / n_not_na
+        } else {
+            total_not_na <- total_not_na + x[i]
+            n_not_na <- n_not_na + 1
+        }
+    }
+    return(res)
 }
 
 na_meancf_R(c(1, 2, 3, 212, 3, NA, 14, 13, NA, 5, 15, 41, 34, 3, 3))
@@ -1173,25 +1173,25 @@ using namespace Rcpp;
 
 // [[Rcpp::export]]
 NumericVector na_meancf_cpp(NumericVector x) {
-	double total_not_na = 0.0;
-	double n_not_na = 0.0;
-	NumericVector res = clone(x);
-	
-	int n = x.size();
-	for(int i = 0; i < n; i++) {
-		// If ith value of x is NA
-		if(NumericVector::is_na(x[i])) {
-			// Set the ith result to the total of non-missing values 
-			// divided by the number of non-missing values
-			res[i] = total_not_na / n_not_na;
-		} else {
-			// Add the ith value of x to the total of non-missing values
-			total_not_na += x[i];
-			// Add 1 to the number of missing values
-			n_not_na++;
-		}
-	}
-	return res;
+    double total_not_na = 0.0;
+    double n_not_na = 0.0;
+    NumericVector res = clone(x);
+    
+    int n = x.size();
+    for(int i = 0; i < n; i++) {
+        // If ith value of x is NA
+        if(NumericVector::is_na(x[i])) {
+            // Set the ith result to the total of non-missing values 
+            // divided by the number of non-missing values
+            res[i] = total_not_na / n_not_na;
+        } else {
+            // Add the ith value of x to the total of non-missing values
+            total_not_na += x[i];
+            // Add 1 to the number of missing values
+            n_not_na++;
+        }
+    }
+    return res;
 }
 ```
 
@@ -1203,13 +1203,13 @@ x[sample(1e5, 100)] <- NA
 
 ```{r benchmark-na-meancf-cpp-plot, message=FALSE}
 res <- microbenchmark::microbenchmark( 
-	na_meancf_R(x), 
-	na_meancf_cpp(x), 
-	times = 5
+    na_meancf_R(x), 
+    na_meancf_cpp(x), 
+    times = 5
 )
 
 ggplot2::autoplot(res) +
-	ggplot2::labs(title = "NA substituting (mean) algorithms")
+    ggplot2::labs(title = "NA substituting (mean) algorithms")
 
 remove(res)
 ```
@@ -1220,16 +1220,16 @@ Auto-regressive models are a type of linear regression for time series. The pred
 
 ```{r auto-regressive-R}
 ar_R <- function(n, constant, phi, eps) {
-	p <- length(phi)
-	x <- numeric(n)
-	for(i in seq(p + 1, n)) {
-		value <- rnorm(1, constant, eps)
-		for(j in seq_len(p)) {
-			value <- value + phi[j] * x[i - j]
-		}
-		x[i] <- value
-	}
-	return(x)
+    p <- length(phi)
+    x <- numeric(n)
+    for(i in seq(p + 1, n)) {
+        value <- rnorm(1, constant, eps)
+        for(j in seq_len(p)) {
+            value <- value + phi[j] * x[i - j]
+        }
+        x[i] <- value
+    }
+    return(x)
 }
 ```
 
@@ -1241,34 +1241,34 @@ using namespace Rcpp;
 
 // [[Rcpp::export]]
 NumericVector ar_cpp(int n, double c, NumericVector phi, double eps) {
-	int p = phi.size();  
-	NumericVector x(n);
-	
-	// Loop from p to n
-	for(int i = p; i < n; i++) {
-		// Generate a random number from the normal distribution
-		double value = R::rnorm(c, eps);
-		// Loop from zero to p
-		for(int j = 0; j < p; j++) {
-			// Increase by the jth element of phi times 
-			// the "i minus j minus 1"th element of x
-			value += phi[j] * x[i - j - 1];
-		}
-		x[i] = value;
-	}
-	return x;
+    int p = phi.size();  
+    NumericVector x(n);
+    
+    // Loop from p to n
+    for(int i = p; i < n; i++) {
+        // Generate a random number from the normal distribution
+        double value = R::rnorm(c, eps);
+        // Loop from zero to p
+        for(int j = 0; j < p; j++) {
+            // Increase by the jth element of phi times 
+            // the "i minus j minus 1"th element of x
+            value += phi[j] * x[i - j - 1];
+        }
+        x[i] = value;
+    }
+    return x;
 }
 ```
 
 ```{r auto-regressive-cpp}
 d <- data.frame(
-	x = 1:50,
-	y = ar_cpp(50, 10, c(1, -0.5), 1)
+    x = 1:50,
+    y = ar_cpp(50, 10, c(1, -0.5), 1)
 )
 
 ggplot2::ggplot(d, aes(x, y)) +
-	ggplot2::geom_line() +
-	ggplot2::labs(title = "Auto regressive model")
+    ggplot2::geom_line() +
+    ggplot2::labs(title = "Auto regressive model")
 
 remove(d)
 ```
@@ -1279,17 +1279,17 @@ Moving averages also depend on previous calculations.
 
 ```{r moving-average-R}
 ma_R <- function(n, mu, theta, sd) {
-	q <- length(theta)
-	x <- numeric(n)
-	eps <- rnorm(n, 0, sd)
-	for(i in seq(q + 1, n)) {
-		value <- mu + eps[i]
-		for(j in seq_len(q)) {
-			value <- value + theta[j] * eps[i - j]
-		}
-		x[i] <- value
-	}
-	return(x)
+    q <- length(theta)
+    x <- numeric(n)
+    eps <- rnorm(n, 0, sd)
+    for(i in seq(q + 1, n)) {
+        value <- mu + eps[i]
+        for(j in seq_len(q)) {
+            value <- value + theta[j] * eps[i - j]
+        }
+        x[i] <- value
+    }
+    return(x)
 }
 ```
 
@@ -1300,38 +1300,38 @@ using namespace Rcpp ;
 
 // [[Rcpp::export]]
 NumericVector ma_cpp( int n, double mu, NumericVector theta, double sd ){
-	int q = theta.size(); 
-	NumericVector x(n);
-	
-	// Generate the noise vector
-	NumericVector eps = rnorm(n, 0.0, sd);
-	
-	// Loop from q to n
-	for(int i = q; i < n; i++) {
-		// Value is mean plus noise
-		double value = mu + eps[i];
-		// Loop from zero to q
-		for(int j = 0; j < q; j++) {
-			// Increase by the jth element of theta times
-			// the "i minus j minus 1"th element of eps
-			value += theta[j] * eps[i - j - 1];
-		}
-		// Set ith element of x to value
-		x[i] = value;
-	}
-	return x;
+    int q = theta.size(); 
+    NumericVector x(n);
+    
+    // Generate the noise vector
+    NumericVector eps = rnorm(n, 0.0, sd);
+    
+    // Loop from q to n
+    for(int i = q; i < n; i++) {
+        // Value is mean plus noise
+        double value = mu + eps[i];
+        // Loop from zero to q
+        for(int j = 0; j < q; j++) {
+            // Increase by the jth element of theta times
+            // the "i minus j minus 1"th element of eps
+            value += theta[j] * eps[i - j - 1];
+        }
+        // Set ith element of x to value
+        x[i] = value;
+    }
+    return x;
 }
 ```
 
 ```{r moving-average-cpp}
 d <- data.frame(
-	x = 1:50,
-	y = ma_cpp(50, 10, c(1, -0.5), 1)
+    x = 1:50,
+    y = ma_cpp(50, 10, c(1, -0.5), 1)
 )
 
 ggplot2::ggplot(d, aes(x, y)) +
-	ggplot2::geom_line() +
-	ggplot2::labs(title = "Moving average")
+    ggplot2::geom_line() +
+    ggplot2::labs(title = "Moving average")
 
 remove(d)
 ```
@@ -1344,50 +1344,50 @@ using namespace Rcpp;
 
 // [[Rcpp::export]]
 NumericVector arma(int n, double mu, NumericVector phi, NumericVector theta, double sd) {
-	int p = phi.size();
-	int q = theta.size();   
-	NumericVector x(n);
-	
-	// Generate the noise vector
-	NumericVector eps = rnorm(n, 0.0, sd);
-	
-	// Start at the max of p and q plus 1
-	int start = std::max(p, q) + 1;
-	
-	// Loop i from start to n
-	for(int i = start; i < n; i++) {
-		// Value is mean plus noise
-		double value = mu + eps[i];
-		
-		// The MA(q) part
-		for(int j = 0; j < q; j++) {
-			// Increase by the jth element of theta times
-			// the "i minus j minus 1"th element of eps
-			value += theta[j] * eps[i - j - 1];
-		}
-		
-		// The AR(p) part
-		for(int j = 0; j < p; j++) {
-			// Increase by the jth element of phi times
-			// the "i minus j minus 1"th element of x
-			value += phi[j] * x[i - j - 1];
-		}
-		
-		x[i] = value;
-	}
-	return x;
+    int p = phi.size();
+    int q = theta.size();   
+    NumericVector x(n);
+    
+    // Generate the noise vector
+    NumericVector eps = rnorm(n, 0.0, sd);
+    
+    // Start at the max of p and q plus 1
+    int start = std::max(p, q) + 1;
+    
+    // Loop i from start to n
+    for(int i = start; i < n; i++) {
+        // Value is mean plus noise
+        double value = mu + eps[i];
+        
+        // The MA(q) part
+        for(int j = 0; j < q; j++) {
+            // Increase by the jth element of theta times
+            // the "i minus j minus 1"th element of eps
+            value += theta[j] * eps[i - j - 1];
+        }
+        
+        // The AR(p) part
+        for(int j = 0; j < p; j++) {
+            // Increase by the jth element of phi times
+            // the "i minus j minus 1"th element of x
+            value += phi[j] * x[i - j - 1];
+        }
+        
+        x[i] = value;
+    }
+    return x;
 }
 ```
 
 ```{r arma-model}
 d <- data.frame(
-	x = 1:50,
-	y = arma(50, 10, c(1, -0.5), c(1, -0.5), 1)
+    x = 1:50,
+    y = arma(50, 10, c(1, -0.5), c(1, -0.5), 1)
 )
 
 ggplot2::ggplot(d, aes(x, y)) +
-	ggplot2::geom_line() +
-	ggplot2::labs(title = "ARMA model")
+    ggplot2::geom_line() +
+    ggplot2::labs(title = "ARMA model")
 
 remove(d)
 ```
